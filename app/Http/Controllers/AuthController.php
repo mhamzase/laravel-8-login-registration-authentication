@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Session;
 use App\Models\User;
+use App\Utils\AppConst;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -25,7 +26,9 @@ class AuthController extends Controller
 
         $data = $request->all();
         $check = $this->create($data);
-        return redirect("login")->withSuccess('Your account created successfully!');
+
+
+        return redirect()->route('login')->with('success','Account created successfully. A Link has been send to your email to verify your email!');
     }
 
     public function create(array $data)
@@ -33,6 +36,7 @@ class AuthController extends Controller
         return User::create([
             'username' => $data['username'],
             'email' => $data['email'],
+            'verified' => AppConst::NO,
             'password' => Hash::make($data['password'])
         ]);
     }
