@@ -1,8 +1,14 @@
+
+   
 <!DOCTYPE html>
 <html>
 <head>
     <title>Laravel8 - Auth</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="stylesheet" href="assets/css/email.css">
     <style type="text/css">
         @import url(https://fonts.googleapis.com/css?family=Raleway:300,400,600);
   
@@ -75,7 +81,11 @@
     </div>
 </nav>
   
-@yield('content')
+@yield('registration')
+@yield('email_verification')
+@yield('login')
+@yield('dashboard')
+
      
 </body>
 </html>

@@ -1,6 +1,6 @@
-@extends('layout')
+@extends('master')
   
-@section('content')
+@section('registration')
 <main class="login-form">
   <div class="cotainer">
       <div class="row justify-content-center">
