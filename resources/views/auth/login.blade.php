@@ -1,6 +1,6 @@
-@extends('layout')
+@extends('master')
 
-@section('content')
+@section('login')
 <main class="login-form">
     <div class="cotainer">
         <div class="row justify-content-center">
@@ -12,6 +12,24 @@
                         @if(Session::has('success'))
                         <div class="alert alert-success">
                             {{Session::get('success')}}
+                        </div>
+                        @endif
+
+                        @if(Session::has('success_email_verify'))
+                        <div class="alert alert-success">
+                            {{Session::get('success_email_verify')}}
+                        </div>
+                        @endif
+
+                        @if(Session::has('already_email_verify'))
+                        <div class="alert alert-primary">
+                            {{Session::get('already_email_verify')}}
+                        </div>
+                        @endif
+
+                        @if(Session::has('error_email_verify'))
+                        <div class="alert alert-danger">
+                            {{Session::get('error_email_verify')}}
                         </div>
                         @endif
 
