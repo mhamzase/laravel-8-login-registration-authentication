@@ -26,11 +26,11 @@ Route::get('registration', [UserController::class, 'registration'])->name('regis
 Route::post('post-registration', [UserController::class, 'postRegistration'])->name('register.post'); 
 
 // this route for logout user
-Route::get('signout', [UserController::class, 'signOut'])->name('signout');
+Route::get('logout', [UserController::class, 'logOut'])->name('logout');
 
 
 // this route for getting dashboard view
-// Route::get('dashboard', [AuthController::class, 'dashboard']);
+Route::get('dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
 
 
 // this route for verification of user email

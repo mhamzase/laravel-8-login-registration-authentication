@@ -10,6 +10,7 @@ use App\Utils\AppConst;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\VerificationEmail;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 
 
@@ -22,7 +23,12 @@ class UserController extends Controller
      */
     public function registration()
     {
-        return view('auth.registration');
+        if(Auth::check()){
+            return Redirect('dashboard');
+        }else{
+            return view('auth.registration');
+        }
+        
     }
 
 
@@ -34,7 +40,11 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('auth.login');
+        if(Auth::check()){
+            return Redirect('dashboard');
+        }else{
+            return view('auth.login');
+        }
     }
 
 
@@ -88,7 +98,11 @@ class UserController extends Controller
 
 
 
-
+    /**
+     * verify user email account
+     *
+     * @return 
+     */
     public function verifyAccount($token)
     {
         $user = User::where('token', $token)->first();
@@ -109,5 +123,56 @@ class UserController extends Controller
         } else {
             return redirect()->route('login')->with('error_email_verify', "Sorry! your email cannot be identified.");
         }
+    }
+
+    
+    /**
+     * user login into account
+     *
+     * @return 
+     */
+    public function postLogin(Request $request)
+    {
+        $request->validate([
+            'email' => 'required',
+            'password' => 'required',
+        ]);
+
+
+        // $verifyLogin = User::where('email',$request->email)->where('password',$request->password)->first();
+        $credentials = $request->only('email', 'password');
+        if (Auth::attempt($credentials)) {
+            return redirect()->intended('dashboard')->with('logged_success','You are logged in successfully!');
+        } else {
+            return redirect()->route('login')->with('login_error', "Oppes! Incorrect Email or Password.");
+        }
+    }
+
+     /**
+     * control dashboard panel
+     *
+     * @return 
+     */
+    public function dashboard()
+    {
+        if(Auth::check()){
+            return view('auth.dashboard');
+        }
+  
+        return redirect("login")->with('not_allowed_dashboard','Opps! You do not have access');
+    }
+
+
+    /**
+     * logout user
+     *
+     * @return 
+     */
+    public function logout()
+    {
+        Session::flush();
+        Auth::logout();
+  
+        return Redirect('login');
     }
 }
