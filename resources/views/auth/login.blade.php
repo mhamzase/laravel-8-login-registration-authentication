@@ -1,5 +1,5 @@
 @extends('master')
-
+@section('title', 'Login')
 @section('login')
 <main class="login-form">
     <div class="cotainer">
@@ -45,6 +45,11 @@
                         </div>
                         @endif
 
+                        @if(Session::has('error_invalid_token'))
+                        <div class="alert alert-danger">
+                            {{Session::get('error_invalid_token')}}
+                        </div>
+                        @endif
                         
 
 
@@ -83,7 +88,7 @@
 
                             <div class="form-group row">
                                 <div class="col-md-6 offset-md-4 text-right">
-                                    <a href="">Forgot Password?</a>
+                                    <a href="{{route('forgot.password')}}">Forgot Password?</a>
                                 </div>
                             </div>
                             <div class="col-md-6 offset-md-4">

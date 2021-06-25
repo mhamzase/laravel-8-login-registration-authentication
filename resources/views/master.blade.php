@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laravel8 - Auth</title>
+    <title>@yield('title')</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -56,7 +56,7 @@
     
 <nav class="navbar navbar-expand-lg navbar-light  navbar-laravel">
     <div class="container">
-        <a class="navbar-brand" href="">Laravel8 - User Auth</a>
+        <a class="navbar-brand" href="">BYTECODE - Laravel8 Auth</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -80,11 +80,18 @@
         </div>
     </div>
 </nav>
-  
+
+{{-- for views --}}
 @yield('registration')
-@yield('email_verification')
 @yield('login')
 @yield('dashboard')
+@yield('forgot_password')
+@yield('update_password')
+
+
+{{-- for emails --}}
+@yield('email_verification')
+@yield('reset_password')
 
      
 </body>
