@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\Authorize;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,9 +30,13 @@ Route::post('post-registration', [UserController::class, 'postRegistration'])->n
 Route::get('logout', [UserController::class, 'logOut'])->name('logout');
 
 
-// this route for getting dashboard view
-Route::get('dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
-
-
 // this route for verification of user email
 Route::get('account/verify/{token}', [UserController::class, 'verifyAccount'])->name('verify.user'); 
+
+
+// this route for getting dashboard view
+Route::middleware([Authorize::class])->group(function(){
+ 
+    Route::get('dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
+ 
+ });
