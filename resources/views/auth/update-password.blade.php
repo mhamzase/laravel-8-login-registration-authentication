@@ -9,8 +9,20 @@
                     <div class="card-header">Update Password</div>
                     <div class="card-body">
 
+
+                        @if(Session::has('error_password_same'))
+                        <div class="alert alert-danger">
+                            {{Session::get('error_password_same')}}
+                        </div>
+                        @endif
+
+                        @if(Session::has('token'))
+                            {{$token = Session::get('token')}}
+                        @endif
+
                         <form action="{{ route('updatePassword.post') }}" method="POST">
                             @csrf
+                            <input type="hidden" value="{{$token}}" name="token" id="token" />
                             <div class="form-group row">
                                 <label for="password" class="col-md-4 col-form-label text-md-right">New Password</label>
                                 <div class="col-md-6">
@@ -24,7 +36,7 @@
                             <div class="form-group row">
                                 <label for="password" class="col-md-4 col-form-label text-md-right">Confirm Password</label>
                                 <div class="col-md-6">
-                                    <input type="password" id="cpassword" class="form-control" value="{{old('password')}}" name="cpassword">
+                                    <input type="password" id="cpassword" class="form-control" value="{{old('cpassword')}}" name="cpassword">
                                     @if ($errors->has('cpassword'))
                                     <span class="text-danger">{{ $errors->first('cpassword') }}</span>
                                     @endif

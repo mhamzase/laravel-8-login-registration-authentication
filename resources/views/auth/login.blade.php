@@ -51,7 +51,11 @@
                         </div>
                         @endif
                         
-
+                        @if(Session::has('update_password_success'))
+                        <div class="alert alert-success">
+                            {{Session::get('update_password_success')}}
+                        </div>
+                        @endif
 
 
                         <form action="{{ route('login.post') }}" method="POST">

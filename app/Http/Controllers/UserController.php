@@ -61,7 +61,7 @@ class UserController extends Controller
         $request->validate([
             'username' => 'required|regex:/^\S*$/u|unique:users',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
+            'password' => 'required|min:3',
         ]);
 
         $data = $request->all();
@@ -200,7 +200,7 @@ class UserController extends Controller
 
 
         if ($user) {
-            return view('auth.update-password');
+            return view('auth.update-password')->with('token',$token);
         } 
         
         return redirect()->route('login')->with('error_invalid_token', "Sorry! Invalid token access.");
@@ -215,7 +215,24 @@ class UserController extends Controller
      */
     public function postUpdatePassword(Request $request)
     {
-        dd("update password");
+        $request->validate(
+            [
+                'password' => 'required|min:3',
+                'cpassword' => 'required|min:3',
+            ],
+        );
+
+        $password = Hash::make($request->password);
+
+        if($request->password === $request->cpassword){
+                User::where('token',$request->token)->update(['password' => $password ]);
+            return redirect()->route('login')->with('update_password_success', 'Your password has been updated.');
+        }else{
+            return redirect()->back()->with('error_password_same', 'Both password\'s are not matching...');
+
+        }
+
+
     }
 
 
