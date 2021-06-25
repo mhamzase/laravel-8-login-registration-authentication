@@ -1,5 +1,5 @@
 @extends('master')
-  
+@section('title', 'Registration')
 @section('registration')
 <main class="login-form">
   <div class="cotainer">

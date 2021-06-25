@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ForgotPassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
@@ -23,12 +24,7 @@ class UserController extends Controller
      */
     public function registration()
     {
-        if(Auth::check()){
-            return Redirect('dashboard');
-        }else{
-            return view('auth.registration');
-        }
-        
+        return view('auth.registration');
     }
 
 
@@ -40,13 +36,19 @@ class UserController extends Controller
      */
     public function index()
     {
-        if(Auth::check()){
-            return Redirect('dashboard');
-        }else{
-            return view('auth.login');
-        }
+        return view('auth.login');
     }
 
+
+    /**
+     * forgot password view page
+     *
+     * @return 
+     */
+    public function forgotPassword()
+    {
+        return view('auth.forgot-password');
+    }
 
 
     /**
@@ -59,7 +61,7 @@ class UserController extends Controller
         $request->validate([
             'username' => 'required|regex:/^\S*$/u|unique:users',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
+            'password' => 'required|min:3',
         ]);
 
         $data = $request->all();
@@ -125,7 +127,7 @@ class UserController extends Controller
         }
     }
 
-    
+
     /**
      * user login into account
      *
@@ -139,27 +141,134 @@ class UserController extends Controller
         ]);
 
 
-        // $verifyLogin = User::where('email',$request->email)->where('password',$request->password)->first();
-        $credentials = $request->only('email', 'password');
-        if (Auth::attempt($credentials)) {
-            return redirect()->intended('dashboard')->with('logged_success','You are logged in successfully!');
+        $user = User::where('email', $request->email)->first();
+        if ($user->verified == AppConst::VERIFIED) {
+            $credentials = $request->only('email', 'password');
+            if (Auth::attempt($credentials)) {
+                return redirect()->intended('dashboard')->with('logged_success', 'You are logged in successfully!');
+            } else {
+                return redirect()->back()->with('login_error', "Oppes! Incorrect Email or Password.");
+            }
         } else {
-            return redirect()->route('login')->with('login_error', "Oppes! Incorrect Email or Password.");
+            return redirect()->back()->with('login_error', "Oppes! Please verify your email account first.");
         }
     }
 
-     /**
+
+
+
+    /**
+     * forgot password post function
+     *
+     * @return 
+     */
+    public function postForgotPassword(Request $request)
+    {
+        $request->validate(
+            [
+                'email' => 'required|exists:users',
+            ],
+            [
+                'email.exists' => 'Email doesn\'t exists in our database!',
+            ]
+        );
+
+        $user = User::where('email', $request->email)->first();
+
+        if ($user->verified == AppConst::VERIFIED) {
+            $details = [
+                'username' => $user->username,
+                'token' => $user->token
+            ];
+
+            Mail::to($request->email)->send(new ForgotPassword($details));
+
+            return redirect()->back()->with('send_email_success', 'An E-mail send to your inbox to reset password!');
+        } else {
+            return redirect()->back()->with('send_email_error', 'Please! verify your E-mail account first.');
+        }
+    }
+
+    /**
+     *  show update password form
+     *
+     * @return 
+     */
+    public function updatePasswordForm($token)
+    {
+        $user = User::where('token', $token)->first();
+
+
+        if ($user) {
+            return view('auth.update-password')->with('token',$token);
+        } 
+        
+        return redirect()->route('login')->with('error_invalid_token', "Sorry! Invalid token access.");
+        
+    }
+
+
+    /**
+     * forgot password post function
+     *
+     * @return 
+     */
+    public function postUpdatePassword(Request $request)
+    {
+        $request->validate(
+            [
+                'password' => 'required|min:3',
+                'cpassword' => 'required|min:3',
+            ],
+        );
+
+        $password = Hash::make($request->password);
+
+        if($request->password === $request->cpassword){
+                User::where('token',$request->token)->update(['password' => $password ]);
+            return redirect()->route('login')->with('update_password_success', 'Your password has been updated.');
+        }else{
+            return redirect()->back()->with('error_password_same', 'Both password\'s are not matching...');
+
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
      * control dashboard panel
      *
      * @return 
      */
     public function dashboard()
     {
-        if(Auth::check()){
-            return view('auth.dashboard');
-        }
-  
-        return redirect("login")->with('not_allowed_dashboard','Opps! You do not have access');
+        return view('auth.dashboard');
     }
 
 
@@ -172,7 +281,7 @@ class UserController extends Controller
     {
         Session::flush();
         Auth::logout();
-  
+
         return Redirect('login');
     }
 }

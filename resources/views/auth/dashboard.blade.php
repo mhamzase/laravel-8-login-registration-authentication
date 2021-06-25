@@ -1,5 +1,5 @@
 @extends('master')
-  
+@section('title', 'User Dashboard')
 @section('dashboard')
 <div class="container">
     <div class="row justify-content-center">
